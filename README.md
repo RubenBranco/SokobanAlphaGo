@@ -4,4 +4,6 @@ Sokoban Solver using DeepMinds AlphaGo Zero system, described by [Silver et al 2
 
 Implementation based on [suragnair](https://github.com/suragnair/alpha-zero-general) implementation.
 
+All board examples come from [abelmartin's website](http://www.abelmartin.com/rj/sokoban_colecciones.html).
+
 This is a work in progress and more details about the implementation will be given and the README will be updated as the project moves forward.
