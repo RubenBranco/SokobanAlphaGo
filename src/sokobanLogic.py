@@ -34,6 +34,9 @@ class Board():
     def __getitem__(self, index):
         return self.board[index]
 
+    def __setitem__(self, index, value):
+        self.board[index] = value
+
     def end_test(self):
         """
         Evaluates whether the current state is an end state.
@@ -52,7 +55,15 @@ class Board():
         moves = set()
 
         for direction in self._directions:
-            if self[playerX + direction[0]][playerY + direction[1]] != self._characters["#"]:
+            target_pos_x, target_pos_y = playerX + direction[0], playerY + direction[1]
+            beyond_pos_x, beyond_pos_y = self._get_beyond_coords(self._directions.index(direction))
+            target_character = self[target_pos_x][target_pos_y]
+            beyond_character = self[beyond_pos_x][beyond_pos_y]
+
+            if target_character in [self._characters['$'], self._characters['*']]:
+                if beyond_character != self._characters['#']:
+                    moves.add(direction)
+            if target_character != self._characters["#"]:
                 moves.add(direction)
 
         return moves
@@ -64,12 +75,15 @@ class Board():
         playerX, playerY = self._find_player()
         player_character = self[playerX][playerY]
         target_pos_x, target_pos_y = playerX + move[0], playerY + move[1]
+        target_character = self[target_pos_x][target_pos_y]
         direction_id = self._directions.index(move)
+        beyond_pos_x, beyond_pos_y = self._get_beyond_coords(direction_id)
+        beyond_character = self[beyond_pos_x][beyond_pos_y]
 
         # Is it a move where you don't push a box
-        if self[target_pos_x][target_pos_y] != self._characters["$"] and self[target_pos_x][target_pos_y] != self._characters["*"]:
+        if target_character != self._characters["$"] and target_character != self._characters["*"]:
             # The new location
-            if self[target_pos_x][target_pos_y] == self._characters["."]:
+            if target_character == self._characters["."]:
                 self[target_pos_x][target_pos_y] = self._characters["+"]
             else:
                 self[target_pos_x][target_pos_y] = self._characters["@"]
@@ -82,15 +96,20 @@ class Board():
 
         # or is it a push move
         else:
-            if direction_id == 0:  # top
-                beyond_pos_x, beyond_pos_y = target_pos_x, target_pos_y - 1
-            elif direction_id == 1:  # right
-                beyond_pos_x, beyond_pos_y = target_pos_x + 1, target_pos_y
-            elif direction_id == 2:  # down
-                beyond_pos_x, beyond_pos_y = target_pos_x, target_pos_y + 1
-            else:  # left
-                beyond_pos_x, beyond_pos_y = target_pos_x - 1, target_pos_y
-            pass
+            if beyond_character == self._characters["."]:
+                self[beyond_pos_x][beyond_pos_y] = self._characters["*"]
+            else:
+                self[beyond_pos_x][beyond_pos_y] = self._characters["$"]
+
+            if target_character == self._characters["*"]:
+                self[target_pos_x][target_pos_y] = self._characters["+"]
+            else:
+                self[target_pos_x][target_pos_y] = self._characters["@"]
+
+            if player_character == self._characters["+"]:
+                self[playerX][playerY] = self._characters["."]
+            else:
+                self[playerX][playerY] = self._characters[" "]
 
     def _find_player(self):
         """
@@ -102,5 +121,21 @@ class Board():
                     return (i, j)
         return None
 
-        def _get_surrounding_pos(self):
-            pass
+    def _get_beyond_coords(self, direction_id):
+        """
+        Gets the coordinates equivelant of travelling 2 squares in one direction.
+        """
+        move = self._directions[direction_id]
+        playerX, playerY = self._find_player()
+        target_pos_x, target_pos_y = playerX + move[0], playerY + move[1]
+
+        if direction_id == 0:  # top
+            beyond_pos_x, beyond_pos_y = target_pos_x, target_pos_y - 1
+        elif direction_id == 1:  # right
+            beyond_pos_x, beyond_pos_y = target_pos_x + 1, target_pos_y
+        elif direction_id == 2:  # down
+            beyond_pos_x, beyond_pos_y = target_pos_x, target_pos_y + 1
+        else:  # left
+            beyond_pos_x, beyond_pos_y = target_pos_x - 1, target_pos_y
+
+        return beyond_pos_x, beyond_pos_y
