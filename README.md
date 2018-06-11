@@ -6,4 +6,4 @@ Implementation based on [suragnair](https://github.com/suragnair/alpha-zero-gene
 
 All board examples come from [abelmartin's website](http://www.abelmartin.com/rj/sokoban_colecciones.html).
 
-This is a work in progress and more details about the implementation will be given and the README will be updated as the project moves forward.
+This is a work in progress and more details about the implementation will be given and the README will be updated as the project moves forward. The objective is to understand how the process works and whether it will work for singleplayer games(aka puzzles).
