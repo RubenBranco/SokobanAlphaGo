@@ -1,6 +1,6 @@
 # Sokoban AlphaGo Zero (WIP)
 
-Sokoban Solver using DeepMinds AlphaGo Zero system, described by [Silver et al 2017](https://www.nature.com/articles/nature24270), download deepmind unformatted upload available [here](https://www.nature.com/articles/nature24270).
+Sokoban Solver using DeepMinds AlphaGo Zero system, described by [Silver et al 2017](https://www.nature.com/articles/nature24270), download deepmind unformatted upload available [here](https://deepmind.com/documents/119/agz_unformatted_nature.pdf).
 
 Implementation based on [suragnair](https://github.com/suragnair/alpha-zero-general) implementation.
 
