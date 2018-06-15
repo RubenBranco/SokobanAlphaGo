@@ -26,16 +26,31 @@ class Board():
         for i in range(len(self._lines)):
             line = self._lines[i]
             for j, character in enumerate(line):
-                self.board[i][j] = self._characters[character]
+                self.board[j][i] = self._characters[character]
 
-        self.height = len(self.board)
-        self.width = len(self.board[0])
+        self.width = len(self.board)
+        self.height = len(self.board[0])
 
     def __getitem__(self, index):
         return self.board[index]
 
     def __setitem__(self, index, value):
         self.board[index] = value
+
+    def __str__(self):
+        """
+        Returns a string representation of the puzzle state.
+        """
+        string = ""
+        
+        for x in range(self.width):
+            line_str = ""
+            for y in range(len(self[x])):
+                line_str += self[x][y]
+            line_str += "\n"
+            string += line_str
+        
+        return string
 
     def end_test(self):
         """
@@ -110,6 +125,66 @@ class Board():
                 self[playerX][playerY] = self._characters["."]
             else:
                 self[playerX][playerY] = self._characters[" "]
+
+    def count_stars(self):
+        """
+        Verifies the number of boxes in the goal.
+        """
+        number = 0
+        
+        for x in range(self.width):
+            for y in range(len(self[x])):
+                if self[x][y] == self._characters["*"]:
+                    number += 1
+
+        return number
+    
+    def median_distance(self):
+        """
+        Returns the median distance of all boxes to all goals using manhattan distance
+        """
+
+        def manhattan_distance(coord1, coord2):
+            """
+            Manhattan distance between two coordinates.
+            """
+            return abs(coord1[0] - coord2[0]) + abs(coord1[1] - coord2[1])
+
+        boxes = self._find_unattended_boxes()
+        goals = self._find_unattended_goals()
+        distances = []
+        
+        for box in boxes:
+            for goal in goals:
+                distances.append(manhattan_distance(box, goal))
+        
+        return int(sum(distances) / len(distances)) if distances else 0
+        
+    def _find_unattended_boxes(self):
+        """
+        Finds the positions of the unattended(goal-less) boxes.
+        """
+        positions = []
+
+        for x in range(self.width):
+            for y in range(len(self[x])):
+                if self[x][y] == self._characters["$"]:
+                    positions.append((x,y))
+
+        return positions
+
+    def _find_unattended_goals(self):
+        """
+        Finds the position of all goals without a box.
+        """
+        positions = []
+
+        for x in range(self.width):
+            for y in range(len(self[x])):
+                if self[x][y] == self._characters["."]:
+                    positions.append((x,y))
+
+        return positions
 
     def _find_player(self):
         """
