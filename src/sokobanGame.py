@@ -1,14 +1,14 @@
-from .sokobanLogic import Board
+from sokobanLogic import Board
 import numpy as np
 from torch.nn import Sigmoid
 
 
 class Sokoban():
-    def __init__(self, fname):
-        with open(fname) as fr:
-            self.fcontent = fr.read()
+    def __init__(self, fcontent):
+        self.fcontent = fcontent
         self.height = None
         self.width = None
+        self.get_initial_board()
         
     def get_initial_board(self):
         """
@@ -73,13 +73,13 @@ class Sokoban():
         """
         Rotates the matrix.
         """
-        assert(len(pi) == self.height**2+1)  # 1 for pass
+        assert(len(pi) == self.height * self.width + 1)  # 1 for pass
         pi_board = np.reshape(pi[:-1], (self.height, self.width))
         l = []
 
         for i in range(1, 5):
             for j in [True, False]:
-                newB = np.rot90(board, i)
+                newB = np.rot90(board.board, i)
                 newPi = np.rot90(pi_board, i)
                 if j:
                     newB = np.fliplr(newB)
