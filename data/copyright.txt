@@ -1,0 +1,27 @@
+Original remixed
+
+Collection: Original remixed
+Author: Jordi Domenech
+Email: jd_sokoban@abelmartin.com
+Website: 
+http://www.abelmartin.com/rj/sokoban.html
+http://sokoban-jd.blogspot.com/
+Copyright: (c) Jordi Domenech
+Date: September 2009
+
+Author's note:
+It is the "Original" collection (1988) of Thinking Rabbit, but highly 
+remodeled. Most of the levels are easy, although some are a little 
+more difficult, especially from the level #20. Levels #2 and #13 
+have been remodeled by Eric F. Tchong.
+
+----------------------------------------------------------------------
+
+These levels are copyright (c) by Jordi Domenech and may be freely 
+distributed for non-commercial use provided they remain unchanged, 
+credited with the author's name, and provided the author is notified. 
+
+License: Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Unported
+http://creativecommons.org/licenses/by-nc-nd/3.0/
+
+-----------------------------------------------------------------------
