@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Board():
     """
     Characters described in https://www.sokoban-online.de/sokoban/levell-format/
@@ -14,28 +17,30 @@ class Board():
         '+': 6,  # player in goal
     }
 
+    _num_to_char = {v: k for k, v in _characters.items()}
+
     _directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Top, right, down, left
 
     def __init__(self, text):
         """
         text is the textual representation of a whole sokoban level.
         """
-        self.board = []
         self._lines = text.split("\n")
+        self.width = max(list(map(lambda x: len(self._lines[x]), range(len(self._lines)))))
+        self.height = len(self._lines)
 
+        self.board = np.empty((self.width, self.height), dtype=int)
         for i in range(len(self._lines)):
             line = self._lines[i]
             for j, character in enumerate(line):
                 self.board[j][i] = self._characters[character]
 
-        self.width = len(self.board)
-        self.height = len(self.board[0])
 
-    def __getitem__(self, index):
-        return self.board[index]
+    # def __getitem__(self, index):
+    #     return self.board[index]
 
-    def __setitem__(self, index, value):
-        self.board[index] = value
+    # def __setitem__(self, index, value):
+    #     self.board[index] = value
 
     def __str__(self):
         """
@@ -45,8 +50,8 @@ class Board():
         
         for x in range(self.width):
             line_str = ""
-            for y in range(len(self[x])):
-                line_str += self[x][y]
+            for y in range(self.height):
+                line_str += self._num_to_char[self.board[x][y]]
             line_str += "\n"
             string += line_str
         
@@ -56,9 +61,9 @@ class Board():
         """
         Evaluates whether the current state is an end state.
         """
-        for i in range(len(self.board)):
-            for j in range(len(self.board[i])):
-                if self[i][j] == "$":
+        for x in range(self.width):
+            for y in range(self.height):
+                if self._num_to_char[self.board[x][y]] == "$":
                     return False
         return True
 
@@ -72,8 +77,8 @@ class Board():
         for direction in self._directions:
             target_pos_x, target_pos_y = playerX + direction[0], playerY + direction[1]
             beyond_pos_x, beyond_pos_y = self._get_beyond_coords(self._directions.index(direction))
-            target_character = self[target_pos_x][target_pos_y]
-            beyond_character = self[beyond_pos_x][beyond_pos_y]
+            target_character = self.board[target_pos_x][target_pos_y]
+            beyond_character = self.board[beyond_pos_x][beyond_pos_y]
 
             if target_character in [self._characters['$'], self._characters['*']]:
                 if beyond_character != self._characters['#']:
@@ -88,43 +93,43 @@ class Board():
         Changes the board by executing a move.
         """
         playerX, playerY = self._find_player()
-        player_character = self[playerX][playerY]
+        player_character = self.board[playerX][playerY]
         target_pos_x, target_pos_y = playerX + move[0], playerY + move[1]
-        target_character = self[target_pos_x][target_pos_y]
+        target_character = self.board[target_pos_x][target_pos_y]
         direction_id = self._directions.index(move)
         beyond_pos_x, beyond_pos_y = self._get_beyond_coords(direction_id)
-        beyond_character = self[beyond_pos_x][beyond_pos_y]
+        beyond_character = self.board[beyond_pos_x][beyond_pos_y]
 
         # Is it a move where you don't push a box
         if target_character != self._characters["$"] and target_character != self._characters["*"]:
             # The new location
             if target_character == self._characters["."]:
-                self[target_pos_x][target_pos_y] = self._characters["+"]
+                self.board[target_pos_x][target_pos_y] = self._characters["+"]
             else:
-                self[target_pos_x][target_pos_y] = self._characters["@"]
+                self.board[target_pos_x][target_pos_y] = self._characters["@"]
 
             # old location
             if player_character == self._characters["+"]:
-                self[playerX][playerY] = self._characters["."]
+                self.board[playerX][playerY] = self._characters["."]
             else:
-                self[playerX][playerY] = self._characters[" "]
+                self.board[playerX][playerY] = self._characters[" "]
 
         # or is it a push move
         else:
             if beyond_character == self._characters["."]:
-                self[beyond_pos_x][beyond_pos_y] = self._characters["*"]
+                self.board[beyond_pos_x][beyond_pos_y] = self._characters["*"]
             else:
-                self[beyond_pos_x][beyond_pos_y] = self._characters["$"]
+                self.board[beyond_pos_x][beyond_pos_y] = self._characters["$"]
 
             if target_character == self._characters["*"]:
-                self[target_pos_x][target_pos_y] = self._characters["+"]
+                self.board[target_pos_x][target_pos_y] = self._characters["+"]
             else:
-                self[target_pos_x][target_pos_y] = self._characters["@"]
+                self.board[target_pos_x][target_pos_y] = self._characters["@"]
 
             if player_character == self._characters["+"]:
-                self[playerX][playerY] = self._characters["."]
+                self.board[playerX][playerY] = self._characters["."]
             else:
-                self[playerX][playerY] = self._characters[" "]
+                self.board[playerX][playerY] = self._characters[" "]
 
     def count_stars(self):
         """
@@ -133,8 +138,8 @@ class Board():
         number = 0
         
         for x in range(self.width):
-            for y in range(len(self[x])):
-                if self[x][y] == self._characters["*"]:
+            for y in range(len(self.board[x])):
+                if self.board[x][y] == self._characters["*"]:
                     number += 1
 
         return number
@@ -167,8 +172,8 @@ class Board():
         positions = []
 
         for x in range(self.width):
-            for y in range(len(self[x])):
-                if self[x][y] == self._characters["$"]:
+            for y in range(self.height):
+                if self.board[x][y] == self._characters["$"]:
                     positions.append((x,y))
 
         return positions
@@ -180,8 +185,8 @@ class Board():
         positions = []
 
         for x in range(self.width):
-            for y in range(len(self[x])):
-                if self[x][y] == self._characters["."]:
+            for y in range(self.height):
+                if self.board[x][y] == self._characters["."]:
                     positions.append((x,y))
 
         return positions
@@ -190,10 +195,10 @@ class Board():
         """
         Finds the position x,y of the player.
         """
-        for i in range(len(self.board)):
-            for j in range(len(self[i])):
-                if self[i][j] == self._characters["@"] or self[i][j] == self._characters["+"]:
-                    return (i, j)
+        for x in range(self.width):
+            for y in range(self.height):
+                if self.board[x][y] == self._characters["@"] or self.board[x][y] == self._characters["+"]:
+                    return (x, y)
         return None
 
     def _get_beyond_coords(self, direction_id):
